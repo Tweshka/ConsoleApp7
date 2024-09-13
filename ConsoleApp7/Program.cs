@@ -1,58 +1,32 @@
 ﻿using System;
-
-class CustomException : Exception
-{
-    public CustomException(string message) : base(message) { }
-}
+using System.IO;
+namespace CountWords
+{ }
 
 class Program
 {
     static void Main()
     {
-        try
+        string text = File.ReadAllText("C:\\Users\\Twe1ve\\Downloads\\Text.txt.txt");
+
+
+        // Убираем знаки пунктуации
+        var noPunctuationText = new string(text.Where(c => !char.IsPunctuation(c)).ToArray());
+
+        // Приводим весь текст к нижнему регистру и разбиваем на слова
+        var words = noPunctuationText.ToLower().Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+        // Подсчитываем количество вхождений каждого слова
+        var wordCount = words.GroupBy(word => word)
+            .Select(group => new { Word = group.Key, Count = group.Count() })
+            .OrderByDescending(x => x.Count)
+            .Take(10);
+
+        // Выводим результаты
+        Console.WriteLine("10 самых частых слов:");
+        foreach (var item in wordCount)
         {
-            Random rand = new Random();
-            int randomNumber = rand.Next(1, 6);
-            switch (randomNumber)
-            {
-                case 1:
-                    throw new DivideByZeroException();
-                case 2:
-                    throw new IndexOutOfRangeException();
-                case 3:
-                    throw new ArgumentNullException();
-                case 4:
-                    throw new FormatException();
-                case 5:
-                    throw new CustomException("Custom Exception occurred");
-                default:
-                    Console.WriteLine("No exception occurred");
-                    break;
-            }
-        }
-        catch (DivideByZeroException ex)
-        {
-            Console.WriteLine("DivideByZeroException caught: " + ex.Message);
-        }
-        catch (IndexOutOfRangeException ex)
-        {
-            Console.WriteLine("IndexOutOfRangeException caught: " + ex.Message);
-        }
-        catch (ArgumentNullException ex)
-        {
-            Console.WriteLine("ArgumentNullException caught: " + ex.Message);
-        }
-        catch (FormatException ex)
-        {
-            Console.WriteLine("FormatException caught: " + ex.Message);
-        }
-        catch (CustomException ex)
-        {
-            Console.WriteLine("CustomException caught: " + ex.Message);
-        }
-        finally
-        {
-            Console.WriteLine("Finally block executed");
+            Console.WriteLine($"{item.Word}: {item.Count}");
         }
     }
 }
