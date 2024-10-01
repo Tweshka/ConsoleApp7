@@ -1,32 +1,32 @@
 ﻿using System;
-using System.IO;
-namespace CountWords
-{ }
+using System.Collections.Generic;
+using System.Linq;
 
-class Program
+namespace Task1
 {
-    static void Main()
+    class Program
     {
-        string text = File.ReadAllText("C:\\Users\\Twe1ve\\Downloads\\Text.txt.txt");
-
-
-        // Убираем знаки пунктуации
-        var noPunctuationText = new string(text.Where(c => !char.IsPunctuation(c)).ToArray());
-
-        // Приводим весь текст к нижнему регистру и разбиваем на слова
-        var words = noPunctuationText.ToLower().Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
-        // Подсчитываем количество вхождений каждого слова
-        var wordCount = words.GroupBy(word => word)
-            .Select(group => new { Word = group.Key, Count = group.Count() })
-            .OrderByDescending(x => x.Count)
-            .Take(10);
-
-        // Выводим результаты
-        Console.WriteLine("10 самых частых слов:");
-        foreach (var item in wordCount)
+        static void Main(string[] args)
         {
-            Console.WriteLine($"{item.Word}: {item.Count}");
+            var classes = new[]
+            {
+               new Classroom { Students = {"Evgeniy", "Sergey", "Andrew"}, },
+               new Classroom { Students = {"Anna", "Viktor", "Vladimir"}, },
+               new Classroom { Students = {"Bulat", "Alex", "Galina"}, }
+           };
+            var allStudents = GetAllStudents(classes);
+
+            Console.WriteLine(string.Join(" ", allStudents));
+        }
+
+        static string[] GetAllStudents(Classroom[] classes)
+        {
+            return classes.SelectMany(c => c.Students).ToArray();
+        }
+
+        public class Classroom
+        {
+            public List<string> Students = new List<string>();
         }
     }
 }
